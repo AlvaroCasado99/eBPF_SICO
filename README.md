@@ -1,7 +1,6 @@
 # eBPF_SICO
 
--Crear un programa que:
-1. Cree un fichero `trampa.txt` en algun lugar del sistema
+1. Crear un fichero `trampa.txt` en algún lugar del sistema
 2. Un programa en ebpf que:
     - Detecte que alguien ha abierto `trampa.txt` 
     - Cierre la sesión del ususario
