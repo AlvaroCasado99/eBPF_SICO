@@ -10,7 +10,7 @@ program = """
 
 struct data_t {
     u32 uid;
-    char file[100];
+    char file[NAME_MAX];
 };
 
 BPF_PERF_OUTPUT(events);
@@ -21,24 +21,12 @@ TRACEPOINT_PROBE(syscalls, sys_enter_openat) {
     const char *arg0 = (const char *)args->filename;
     bpf_probe_read_str(&data.file, sizeof(data.file), arg0);
 
-    char target[60] = "/home/horus/Documents/Master/SICO/eBPF_SICO/trampa.txt";
-    char target2[60] = "/home/horus/Documents/Master/SICO/eBPF_SICO/trampa.txt";
+    //char target[] = "trampa.txt";
+    //char target[10] = "trampa.txt";
 
-    int i;
-    for (i = 0; i < sizeof(target); i++) {
-        if (target2[i] != target[i]) {
-            return 0; // Las cadenas son diferentes
-        }
-        if (target2[i] == '\\0') {
-            break; // Termina si es el final de la cadena
-        }
+    if(strcmp(data.file, "trampa.txt")==0){ 
+        events.perf_submit(args, &data, sizeof(data));
     }
-
-    events.perf_submit(args, &data, sizeof(data));
-
-    //if(memcmp(data.file, data.file, sizeof(data.file))){ 
-        //events.perf_submit(args, &data, sizeof(data));
-    //}
 
     return 0;
 }
@@ -53,7 +41,7 @@ def callback(cpu, data, size):
     uid = event.uid
     
     user_name = pwd.getpwuid(uid).pw_name
-    print(f"El usuario {user_name} ejecuto la syscall con id 59 desde: {msg}")
+    print(f"El usuario {user_name} entro al archivo")
 
 b["events"].open_perf_buffer(callback)
 
